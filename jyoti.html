@@ -1,0 +1,197 @@
+<html>
+
+<head>
+    <title>To-Do List</title>
+    <style>
+        table,td,th{
+            border : 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+        th,td{
+            padding : 13px;
+            padding-right: 20px;
+            text-align: center;
+
+        }
+        .todo
+        {
+            text-align: center;
+            font-size: large;
+            color:mediumblue;
+        }
+    </style>
+</head>
+
+<body style="background-image: url(background.jpg);">
+    <h1 style=" font-family: Georgia, 'Times New Roman', Times, serif; text-align: center; color: navy;">TO-DO LIST</h1>
+
+    <div class="todo">
+
+    <form autocomplete="off">
+      <u><label for="task" style="font-size:x-large; font-style: italic;">Enter New Task:</label></u><br><br>
+      <input style="background:hsla(202, 52%, 70%, 0.425); height:1cm; font-size: medium;" type="text" id="task" name="task" placeholder="Title..."><br><br>
+      
+      <button onclick="todo()" style="background:powderblue;">ADD</button>
+    </form>
+
+    <table id="myTable" style="margin: auto;">
+        <tr>
+            <b><th style="background-color: hsla(202, 38%, 40%, 0.425); font-family: sans-serif; width : 1cm;">S.No</th>
+            <th style="background-color: hsl(202, 38%, 40%, 0.425); font-family: sans-serif; width:4cm;">TASK</th>
+            <th style="background-color: hsl(202, 38%, 40%, 0.425); font-family: sans-serif; width:4cm;" colspan="2">STATUS</th>
+        </tr>
+    </table><br><br>
+
+ 
+    <button style="text-align: end; background: powderblue;" onclick="clearAll()">Clear All</button>
+
+    </div>
+
+    
+    
+    <script>
+
+        var i = 0;
+
+        var l = localStorage.length;
+        i=l;
+
+        var table = document.getElementById("myTable");
+
+        for(let j=1; j<=l; j++)
+            {
+                var res = JSON.parse(localStorage.getItem(j));
+
+                var row = table.insertRow(j);
+                row.id = j;
+
+                if(res.delete)
+                {
+                  var cell4 = row.insertCell(0);
+                  var cell3 = row.insertCell(0);
+                  var cell2 = row.insertCell(0);
+                  var cell1 = row.insertCell(0);
+
+                  if(res.complete)
+                  {
+                    row.style.backgroundColor = "rgb(170, 181, 173)";
+
+                    res.complete = false;
+
+                     cell1.innerHTML = j;
+                     cell2.innerHTML = res.text ;
+                     cell3.innerHTML = "<button onclick='rem_highlight_row(this)'>Undo</button>";
+                     cell4.innerHTML = "<button onclick='removeTask(this)'>Delete</button>";
+                    
+                  }
+                  else
+                  {
+                    row.style.backgroundColor = "unset";
+
+                     cell1.innerHTML = j;
+                     cell2.innerHTML = res.text ;
+                     cell3.innerHTML = "<button onclick='highlight_row(this)'>Complete</button>";
+                     cell4.innerHTML = "<button onclick='removeTask(this)'>Delete</button>";
+                  }
+                }
+
+            }
+
+        function todo()
+        {    
+
+            i=i+1;
+
+           
+            var newT = document.getElementById("task").value;
+            document.getElementById("task").value = '';
+
+
+            var row = table.insertRow(i);
+            row.id = i;
+
+            var cell4 = row.insertCell(0);
+            var cell3 = row.insertCell(0);
+            var cell2 = row.insertCell(0);
+            var cell1 = row.insertCell(0);
+
+
+             cell1.innerHTML = i ;
+             cell2.innerHTML = newT ;
+             cell3.innerHTML = "<button onclick='highlight_row(this)'>Complete</button>";
+             cell4.innerHTML = "<button onclick='removeTask(this)'>Delete</button>";
+
+             
+
+             document.addEventListener('submit', (event) => {
+             event.preventDefault();})
+             
+             let data = {};
+             data.text = newT;
+             data.complete = false;
+             data.delete = true;
+             localStorage.setItem(i, JSON.stringify(data)); 
+        }
+         
+        function highlight_row(element)
+        {   
+            var key = element.parentNode.parentNode.rowIndex;
+            var id = element.parentNode.parentNode.id;
+            let data = JSON.parse(localStorage.getItem(id));
+            data.complete = true;
+            localStorage.setItem(id, JSON.stringify(data));
+            var rowSelected = table.getElementsByTagName('tr')[key];
+            
+            rowSelected.style.backgroundColor = "rgb(170, 181, 173)";
+            window.location.reload();
+
+        }
+
+        function rem_highlight_row(element)
+        {   
+            var key = element.parentNode.parentNode.rowIndex;
+            var id = element.parentNode.parentNode.id;
+            let data = JSON.parse(localStorage.getItem(id));
+            data.complete = false;
+            localStorage.setItem(id, JSON.stringify(data));
+            var rowSelected = table.getElementsByTagName('tr')[key];
+            
+            rowSelected.style.backgroundColor = "unset";
+            window.location.reload();
+
+
+
+        }
+
+        function removeTask(element)
+        {
+            var key = element.parentNode.parentNode.rowIndex;
+            var id = element.parentNode.parentNode.id;
+            let data = JSON.parse(localStorage.getItem(id));
+            data.delete = false;
+            localStorage.setItem(id, JSON.stringify(data));
+
+            table.deleteRow(key);
+        }
+
+        function clearAll()
+         {
+    
+              var r = confirm("Are you sure you want to clear the list?");
+              if (r == true)
+             {
+            localStorage.clear();
+               window.location.reload();   
+             } 
+             else
+             {
+                 return;
+             }
+         }
+
+    </script>
+
+</body>
+
+</html>
