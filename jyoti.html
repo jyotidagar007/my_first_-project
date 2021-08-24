@@ -302,6 +302,7 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
         function highlight_row(element) {
 
             var key = element.parentNode.parentNode.rowIndex;
+            //var id = element.parentNode.parentNode.id;
 
             var rowSelected = table.getElementsByTagName('tr')[key];
 
@@ -312,12 +313,13 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
 
             let data = JSON.parse(localStorage.getItem(key));
             data.complete = true;
-            localStorage.setItem(id, JSON.stringify(data));
+            localStorage.setItem(key, JSON.stringify(data));
 
         }
 
         function rem_highlight_row(element) {
             var key = element.parentNode.parentNode.rowIndex;
+            //var id = element.parentNode.parentNode.id;
 
             var rowSelected = table.getElementsByTagName('tr')[key];
 
@@ -326,9 +328,9 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
             rowSelected.deleteCell(5);
             rowSelected.insertCell(5).innerHTML = "<button onclick='removeTask(this)'>Delete</button> <button onclick='edit(this)'>Edit</button> <button onclick='highlight_row(this)'>Complete</button>";
 
-            let data = JSON.parse(localStorage.getItem(id));
+            let data = JSON.parse(localStorage.getItem(key));
             data.complete = false;
-            localStorage.setItem(id, JSON.stringify(data));
+            localStorage.setItem(key, JSON.stringify(data));
 
 
 
