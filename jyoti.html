@@ -79,7 +79,7 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
                 name="tag" placeholder="Tags..." value=""><br><br>
 
             <select id="Priority" name="Priority" value="">
-                <option id= "CV" value="CHOOSE PRIORITY ">CHOOSE PRIORITY </option>
+                <option id="CV" value="CHOOSE PRIORITY ">CHOOSE PRIORITY </option>
                 <option id="high" value="high" name="priority">HIGH</option>
                 <option id="mid" value="mid" name="priority">MID</option>
                 <option id="low" value="low" name="priority">LOW</option>
@@ -167,23 +167,33 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
 
                 }
                 else {
-                    row.style.backgroundColor = "unset";
+                    //row.style.backgroundColor = "unset";
 
                     let ch4 = "<button onclick='highlight_row(this)'>Complete</button>";
                     ch3 = ch.concat(ch4);
+
+                    if (prio == "RED") {
+                        row.style.backgroundColor = "rgb(255, 199, 216)";
+
+                    } else if (prio == "YELLOW") {
+                        row.style.backgroundColor = "rgb(238, 240, 141)";
+
+                    } else if (prio == "GREEN") {
+                        row.style.backgroundColor = "rgb(171, 245, 171)";
+                    }
                 }
 
                 row.insertCell(5).innerHTML = ch3;
 
-                if (prio == "RED") {
-                    row.style.backgroundColor = "rgb(255, 199, 216)";
+                // if (prio == "RED") {
+                //     row.style.backgroundColor = "rgb(255, 199, 216)";
 
-                } else if (prio == "YELLOW") {
-                    row.style.backgroundColor = "rgb(238, 240, 141)";
+                // } else if (prio == "YELLOW") {
+                //     row.style.backgroundColor = "rgb(238, 240, 141)";
 
-                } else if (prio == "GREEN") {
-                    row.style.backgroundColor = "rgb(171, 245, 171)";
-                }
+                // } else if (prio == "GREEN") {
+                //     row.style.backgroundColor = "rgb(171, 245, 171)";
+                // }
 
             }
 
@@ -330,6 +340,23 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
 
             let data = JSON.parse(localStorage.getItem(key));
             data.complete = false;
+            var pri = data.col;
+
+            if (pri == "RED") {
+                rowSelected.style.backgroundColor = "rgb(255, 199, 216)";
+                // row.style.opacity = "0.3";
+                // data.col = "RED";
+
+            } else if (pri == "YELLOW") {
+                rowSelected.style.backgroundColor = "rgb(238, 240, 141)";
+                // row.style.opacity = "0.3";
+                //data.col = "YELLOW";
+
+            } else if (pri == "GREEN") {
+                rowSelected.style.backgroundColor = "rgb(171, 245, 171)";
+                // data.col = "GREEN";
+            }
+
             localStorage.setItem(key, JSON.stringify(data));
 
 
