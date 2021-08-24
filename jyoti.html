@@ -1,194 +1,372 @@
 <html>
 
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+    </script>
     <title>To-Do List</title>
     <style>
-        table,td,th{
-            border : 1px solid black;
+        .Outer {
+            display: none;
+            padding-top: 2px;
+            padding-bottom: 2px;
+            text-align: right;
+        }
+
+        table,
+        td,
+        th {
+            border: 1px solid black;
             border-collapse: collapse;
             text-align: center;
-        }
-        th,td{
-            padding : 13px;
-            padding-right: 20px;
-            text-align: center;
+            padding: 13px;
 
         }
-        .todo
-        {
+
+        .todo {
             text-align: center;
             font-size: large;
-            color:mediumblue;
+            color: mediumblue;
+            display: none;
+        }
+
+        .fixed {
+            position: fixed;
+            bottom: 3%;
+            right: 10%;
+            border: 2px outset #20899b1e;
+            padding: 0.5%;
+            padding-right: 1%;
+            padding-left: 1%;
+            background-color: hsla(202, 38%, 40%, 0.178);
+            border-radius: 2cm;
+
+        }
+
+        #left {
+            position: fixed;
+            left: 5%;
+            margin-top: 7%;
+        }
+
+        #right {
+            position: fixed;
+            right: 10%;
+        }
+
+        #Priority {
+            padding: 2%;
+            background-color: rgba(81, 131, 160, 0.425);
+            border-radius: 2cm;
+            color: black;
+            border: hidden
         }
     </style>
 </head>
 
 <body style="background-image: url(background.jpg);">
-    <h1 style=" font-family: Georgia, 'Times New Roman', Times, serif; text-align: center; color: navy;">TO-DO LIST</h1>
 
-    <div class="todo">
+    <div id="left" class="todo">
 
-    <form autocomplete="off">
-      <u><label for="task" style="font-size:x-large; font-style: italic;">Enter New Task:</label></u><br><br>
-      <input style="background:hsla(202, 52%, 70%, 0.425); height:1cm; font-size: medium;" type="text" id="task" name="task" placeholder="Title..."><br><br>
-      
-      <button onclick="todo()" style="background:powderblue;">ADD</button>
-    </form>
+        <form autocomplete="off">
+            <b><label for="task" style="font-style: italic; font-size:x-large; font-style: italic; border:hidden; background-color: hsla(203, 16%, 71%, 0.425);
+padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb(102, 4, 4);">Enter New
+                    Task:</label></b><br><br><br>
+            <input style="background:hsla(202, 52%, 70%, 0.425); height:1cm; font-size: medium;" type="text" id="task"
+                name="task" placeholder="Title..." value="" /><br><br>
+            <textarea id="desc" cols="30" rows="5" style="background:hsla(202, 52%, 70%, 0.425); font-size: medium;"
+                placeholder="DESCRIPTION..." value=""></textarea><br><br>
+            <input style="background:hsla(202, 52%, 70%, 0.425); height:1cm; font-size: medium;" type="text" id="tag"
+                name="tag" placeholder="Tags..." value=""><br><br>
 
-    <table id="myTable" style="margin: auto;">
-        <tr>
-            <b><th style="background-color: hsla(202, 38%, 40%, 0.425); font-family: sans-serif; width : 1cm;">S.No</th>
-            <th style="background-color: hsl(202, 38%, 40%, 0.425); font-family: sans-serif; width:4cm;">TASK</th>
-            <th style="background-color: hsl(202, 38%, 40%, 0.425); font-family: sans-serif; width:4cm;" colspan="2">STATUS</th>
-        </tr>
-    </table><br><br>
+            <select id="Priority" name="Priority" value="">
+                <option id= "CV" value="CHOOSE PRIORITY ">CHOOSE PRIORITY </option>
+                <option id="high" value="high" name="priority">HIGH</option>
+                <option id="mid" value="mid" name="priority">MID</option>
+                <option id="low" value="low" name="priority">LOW</option>
+            </select><br><br>
 
- 
-    <button style="text-align: end; background: powderblue;" onclick="clearAll()">Clear All</button>
+            <input id="id" name="id" value="" hidden />
+
+            <button id="add" onclick="todo()" style="background:powderblue;">ADD</button>
+        </form>
 
     </div>
 
-    
-    
+    <div id="right" class="todo">
+
+        <div class="Outer">
+            <h1 style=" font-family: Georgia, 'Times New Roman', Times, serif; text-align:center; color: navy;">TO-DO
+                LIST
+            </h1>
+        </div>
+
+        <table id="myTable" style="margin: auto;">
+            <tr>
+                <b>
+                    <th style="background-color: hsla(202, 38%, 40%, 0.425); font-family: sans-serif; width : 1cm;">S.No
+                    </th>
+                    <th style="background-color: hsl(202, 38%, 40%, 0.425); font-family: sans-serif; width:2.5cm;">Time
+                    </th>
+                    <th style="background-color: hsl(202, 38%, 40%, 0.425); font-family: sans-serif; width:2.5cm;">TASK
+                    </th>
+                    <th style="background-color: hsl(202, 38%, 40%, 0.425); font-family: sans-serif; width:2.5cm;">
+                        DESCRIPTION</th>
+                    <th style="background-color: hsl(202, 38%, 40%, 0.425); font-family: sans-serif; width:2.5cm;">TAG
+                    </th>
+                    <th style="background-color: hsl(202, 38%, 40%, 0.425); font-family: sans-serif; width:2.5cm;"
+                        colspan="3">ACTION</th>
+            </tr>
+        </table><br>
+
+        <p class="fixed" style="display: none; font-style: italic; color: rgb(2, 2, 2); ">NEW TASK IS ADDED</p>
+
+        <button style="text-align: end; background: powderblue;" onclick="clearAll()">Clear All</button>
+
+    </div>
+
+
     <script>
 
-        var i = 0;
+        $(document).ready(function () {
+            $(".Outer").fadeIn(2000);
+        });
+        $(document).ready(function () {
+            $(".todo").fadeIn(3000);
+        });
 
-        var l = localStorage.length;
-        i=l;
+        var i = 0;
+        i = localStorage.length;
 
         var table = document.getElementById("myTable");
 
-        for(let j=1; j<=l; j++)
-            {
-                var res = JSON.parse(localStorage.getItem(j));
+        let s_no = 0;
 
-                var row = table.insertRow(j);
-                row.id = j;
+        for (var j = 1; j <= localStorage.length + 1; j++) {
+            var res = JSON.parse(localStorage.getItem(j));
 
-                if(res.delete)
-                {
-                  var cell4 = row.insertCell(0);
-                  var cell3 = row.insertCell(0);
-                  var cell2 = row.insertCell(0);
-                  var cell1 = row.insertCell(0);
+            if (res != null) {
+                var prio = res.col;
+                s_no++;
+                row = table.insertRow(s_no);
+                row.insertCell(0).innerHTML = s_no;
+                row.insertCell(1).innerHTML = res.date;
+                row.insertCell(2).innerHTML = res.text;
+                row.insertCell(3).innerHTML = res.desc;
+                row.insertCell(4).innerHTML = res.tag;
 
-                  if(res.complete)
-                  {
+                var ch1 = "<button onclick='removeTask(this)'>Delete</button> ";
+                var ch2 = "<button onclick='edit(this)'>Edit</button> ";
+                var ch = ch1.concat(ch2);
+                var ch3;
+
+                if (res.complete) {
                     row.style.backgroundColor = "rgb(170, 181, 173)";
 
-                    res.complete = false;
+                    let ch4 = "<button onclick='rem_highlight_row(this)'>Undo</button>";
+                    ch3 = ch.concat(ch4);
 
-                     cell1.innerHTML = j;
-                     cell2.innerHTML = res.text ;
-                     cell3.innerHTML = "<button onclick='rem_highlight_row(this)'>Undo</button>";
-                     cell4.innerHTML = "<button onclick='removeTask(this)'>Delete</button>";
-                    
-                  }
-                  else
-                  {
+                }
+                else {
                     row.style.backgroundColor = "unset";
 
-                     cell1.innerHTML = j;
-                     cell2.innerHTML = res.text ;
-                     cell3.innerHTML = "<button onclick='highlight_row(this)'>Complete</button>";
-                     cell4.innerHTML = "<button onclick='removeTask(this)'>Delete</button>";
-                  }
+                    let ch4 = "<button onclick='highlight_row(this)'>Complete</button>";
+                    ch3 = ch.concat(ch4);
+                }
+
+                row.insertCell(5).innerHTML = ch3;
+
+                if (prio == "RED") {
+                    row.style.backgroundColor = "rgb(255, 199, 216)";
+
+                } else if (prio == "YELLOW") {
+                    row.style.backgroundColor = "rgb(238, 240, 141)";
+
+                } else if (prio == "GREEN") {
+                    row.style.backgroundColor = "rgb(171, 245, 171)";
                 }
 
             }
 
-        function todo()
-        {    
-
-            i=i+1;
-
-           
-            var newT = document.getElementById("task").value;
-            document.getElementById("task").value = '';
-
-
-            var row = table.insertRow(i);
-            row.id = i;
-
-            var cell4 = row.insertCell(0);
-            var cell3 = row.insertCell(0);
-            var cell2 = row.insertCell(0);
-            var cell1 = row.insertCell(0);
-
-
-             cell1.innerHTML = i ;
-             cell2.innerHTML = newT ;
-             cell3.innerHTML = "<button onclick='highlight_row(this)'>Complete</button>";
-             cell4.innerHTML = "<button onclick='removeTask(this)'>Delete</button>";
-
-             
-
-             document.addEventListener('submit', (event) => {
-             event.preventDefault();})
-             
-             let data = {};
-             data.text = newT;
-             data.complete = false;
-             data.delete = true;
-             localStorage.setItem(i, JSON.stringify(data)); 
         }
-         
-        function highlight_row(element)
-        {   
-            var key = element.parentNode.parentNode.rowIndex;
+
+        function todo() {
+            if (task.value == "") {
+                alert("Please enter value");
+                return;
+            }
+
+            else {
+                let id = document.getElementById("id").value;
+                var newT = document.getElementById("task").value;
+
+                var d = new Date();
+                var m = d.getDate() + "-" + d.getMonth() + "-" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes();
+
+                var desc = document.getElementById("desc").value;
+                var tag = document.getElementById("tag").value;
+                var prio = document.getElementById("Priority").value;
+
+                document.getElementById("task").value = '';
+                document.getElementById("desc").value = '';
+                document.getElementById("tag").value = '';
+                document.getElementById("id").value = '';
+                document.getElementById("Priority").value = "CHOOSE PRIORITY ";
+
+
+                let data = {};
+
+                data.date = m;
+                data.text = newT;
+                data.desc = desc;
+                data.tag = tag;
+                data.complete = false;
+                data.col = "no_colour";
+
+                if (id && id != "") {
+
+                    let row = document.getElementById(id);
+
+                    row.cells[1].innerHTML = m;
+                    row.cells[2].innerHTML = newT;
+                    row.cells[2].innerHTML = desc;
+                    row.cells[3].innerHTML = tag;
+
+                    if (prio == "high") {
+                        row.style.backgroundColor = "rgb(255, 199, 216)";
+                        data.col = "RED";
+
+                    } else if (prio == "mid") {
+                        row.style.backgroundColor = "rgb(238, 240, 141)";
+                        data.col = "YELLOW";
+
+                    } else if (prio == "low") {
+                        row.style.backgroundColor = "rgb(171, 245, 171)";
+                        data.col = "GREEN";
+                    }
+
+                    localStorage.setItem(id, JSON.stringify(data));
+
+                }
+                else {
+                    i = i + 1;
+                    $("p").fadeIn(1000);
+                    $("p").fadeOut(1000);
+
+                    var row = table.insertRow(i);
+                    row.id = i;
+
+                    row.insertCell(0).innerHTML = i;
+                    row.insertCell(1).innerHTML = m;
+                    row.insertCell(2).innerHTML = newT;
+                    row.insertCell(3).innerHTML = desc;
+                    row.insertCell(4).innerHTML = tag;
+                    row.insertCell(5).innerHTML = "<button onclick='removeTask(this)'>Delete</button> <button onclick='edit(this)'>Edit</button> <button onclick='highlight_row(this)'>Complete</button>";
+
+                    if (prio == "high") {
+                        row.style.backgroundColor = "rgb(255, 199, 216)";
+                        // row.style.opacity = "0.3";
+                        data.col = "RED";
+
+                    } else if (prio == "mid") {
+                        row.style.backgroundColor = "rgb(238, 240, 141)";
+                        // row.style.opacity = "0.3";
+                        data.col = "YELLOW";
+
+                    } else if (prio == "low") {
+                        row.style.backgroundColor = "rgb(171, 245, 171)";
+                        data.col = "GREEN";
+                    }
+
+                    localStorage.setItem(i, JSON.stringify(data));
+
+                }
+
+                document.addEventListener('submit', (event) => {
+                    event.preventDefault();
+                })
+
+            }
+        }
+
+        function edit(element) {
             var id = element.parentNode.parentNode.id;
             let data = JSON.parse(localStorage.getItem(id));
-            data.complete = true;
-            localStorage.setItem(id, JSON.stringify(data));
-            var rowSelected = table.getElementsByTagName('tr')[key];
-            
-            rowSelected.style.backgroundColor = "rgb(170, 181, 173)";
-            window.location.reload();
+
+            $("#task").val(data.text);
+            $("#id").val(id);
+            $("#desc").val(data.desc);
+            $("#tag").val(data.tag);
 
         }
 
-        function rem_highlight_row(element)
-        {   
+        function highlight_row(element) {
+
             var key = element.parentNode.parentNode.rowIndex;
-            var id = element.parentNode.parentNode.id;
+
+            var rowSelected = table.getElementsByTagName('tr')[key];
+
+            rowSelected.style.backgroundColor = "rgb(170, 181, 173)";
+
+            rowSelected.deleteCell(5);
+            rowSelected.insertCell(5).innerHTML = "<button onclick='removeTask(this)'>Delete</button> <button onclick='edit(this)'>Edit</button> <button onclick='rem_highlight_row(this)'>Undo</button>";
+
+            let data = JSON.parse(localStorage.getItem(key));
+            data.complete = true;
+            localStorage.setItem(id, JSON.stringify(data));
+
+        }
+
+        function rem_highlight_row(element) {
+            var key = element.parentNode.parentNode.rowIndex;
+
+            var rowSelected = table.getElementsByTagName('tr')[key];
+
+            rowSelected.style.backgroundColor = "unset";
+
+            rowSelected.deleteCell(5);
+            rowSelected.insertCell(5).innerHTML = "<button onclick='removeTask(this)'>Delete</button> <button onclick='edit(this)'>Edit</button> <button onclick='highlight_row(this)'>Complete</button>";
+
             let data = JSON.parse(localStorage.getItem(id));
             data.complete = false;
             localStorage.setItem(id, JSON.stringify(data));
-            var rowSelected = table.getElementsByTagName('tr')[key];
-            
-            rowSelected.style.backgroundColor = "unset";
-            window.location.reload();
 
 
 
         }
 
-        function removeTask(element)
-        {
+        function removeTask(element) {
+
             var key = element.parentNode.parentNode.rowIndex;
-            var id = element.parentNode.parentNode.id;
-            let data = JSON.parse(localStorage.getItem(id));
-            data.delete = false;
-            localStorage.setItem(id, JSON.stringify(data));
+
+            var row = table.getElementsByTagName('tr')[key];
 
             table.deleteRow(key);
+            localStorage.removeItem(key);
+
+            i--;
+            s_no--;
+
         }
 
-        function clearAll()
-         {
-    
-              var r = confirm("Are you sure you want to clear the list?");
-              if (r == true)
-             {
-            localStorage.clear();
-               window.location.reload();   
-             } 
-             else
-             {
-                 return;
-             }
-         }
+        function clearAll() {
+
+            var r = confirm("Are you sure you want to clear the list?");
+
+            if (r == true) {
+                var Rows = table.getElementsByTagName('tr');
+                var len = Rows.length;
+
+                for (let p = len; p > 1; p--) {
+                    table.deleteRow(-1);
+                    i = i - 1;
+                }
+                localStorage.clear();
+                console.log(len);
+            }
+            else {
+                return;
+            }
+        }
 
     </script>
 
