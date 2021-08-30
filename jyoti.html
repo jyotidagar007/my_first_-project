@@ -85,7 +85,7 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
                 <option id="low" value="low" name="priority">LOW</option>
             </select><br><br>
 
-            <input id="id" name="id" value="" hidden />
+            <input id="row_i_d" name="row_i_d" value="" hidden />
 
             <button id="add" onclick="todo()" style="background:powderblue;">ADD</button>
         </form>
@@ -127,6 +127,8 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
 
     <script>
 
+        // var username = sessionStorage.getItem("username");
+
         $(document).ready(function () {
             $(".Outer").fadeIn(2000);
         });
@@ -135,69 +137,69 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
         });
 
         var i = 0;
-        i = localStorage.length;
 
         var table = document.getElementById("myTable");
 
-        let s_no = 0;
+        let obj_td = JSON.parse(localStorage.getItem("to_do_"));
 
-        for (var j = 1; j <= localStorage.length + 1; j++) {
-            var res = JSON.parse(localStorage.getItem(j));
+        if (obj_td) {
+            let r_n = obj_td.username;
 
-            if (res != null) {
-                var prio = res.col;
-                s_no++;
-                row = table.insertRow(s_no);
-                row.insertCell(0).innerHTML = s_no;
-                row.insertCell(1).innerHTML = res.date;
-                row.insertCell(2).innerHTML = res.text;
-                row.insertCell(3).innerHTML = res.desc;
-                row.insertCell(4).innerHTML = res.tag;
+            for (let key in r_n) {
+                i += 1;
+            }
+            let s_no = 0;
+            for (let key in r_n) {
+                if (r_n.hasOwnProperty(key)) {
+                    let res = {};
+                    res = r_n[key];
+                    var prio = res.col;
+                    s_no = s_no + 1;
+                    let row = table.insertRow(s_no);
+                    row.insertCell(0).innerHTML = s_no;
+                    row.insertCell(1).innerHTML = res.date;
+                    row.insertCell(2).innerHTML = res.text;
+                    row.insertCell(3).innerHTML = res.desc;
+                    row.insertCell(4).innerHTML = res.tag;
 
-                var ch1 = "<button onclick='removeTask(this)'>Delete</button> ";
-                var ch2 = "<button onclick='edit(this)'>Edit</button> ";
-                var ch = ch1.concat(ch2);
-                var ch3;
+                    var ch1 = "<button onclick='removeTask(this)'>Delete</button> ";
+                    var ch2 = "<button onclick='edit(this)'>Edit</button> ";
+                    var ch = ch1.concat(ch2);
+                    var ch3;
 
-                if (res.complete) {
-                    row.style.backgroundColor = "rgb(170, 181, 173)";
+                    if (res.complete) {
+                        row.style.backgroundColor = "rgb(170, 181, 173)";
 
-                    let ch4 = "<button onclick='rem_highlight_row(this)'>Undo</button>";
-                    ch3 = ch.concat(ch4);
+                        let ch4 = "<button onclick='rem_highlight_row(this)'>Undo</button>";
+                        ch3 = ch.concat(ch4);
 
-                }
-                else {
-                    //row.style.backgroundColor = "unset";
-
-                    let ch4 = "<button onclick='highlight_row(this)'>Complete</button>";
-                    ch3 = ch.concat(ch4);
-
-                    if (prio == "RED") {
-                        row.style.backgroundColor = "rgb(255, 199, 216)";
-
-                    } else if (prio == "YELLOW") {
-                        row.style.backgroundColor = "rgb(238, 240, 141)";
-
-                    } else if (prio == "GREEN") {
-                        row.style.backgroundColor = "rgb(171, 245, 171)";
                     }
+                    else {
+
+                        row.style.backgroundColor = "unset";
+
+                        let ch4 = "<button onclick='highlight_row(this)'>Complete</button>";
+                        ch3 = ch.concat(ch4);
+
+                        if (prio == "RED") {
+                            row.style.backgroundColor = "rgb(255, 199, 216)";
+
+                        } else if (prio == "YELLOW") {
+                            row.style.backgroundColor = "rgb(238, 240, 141)";
+
+                        } else if (prio == "GREEN") {
+                            row.style.backgroundColor = "rgb(171, 245, 171)";
+                        }
+                    }
+
+                    row.insertCell(5).innerHTML = ch3;
                 }
-
-                row.insertCell(5).innerHTML = ch3;
-
-                // if (prio == "RED") {
-                //     row.style.backgroundColor = "rgb(255, 199, 216)";
-
-                // } else if (prio == "YELLOW") {
-                //     row.style.backgroundColor = "rgb(238, 240, 141)";
-
-                // } else if (prio == "GREEN") {
-                //     row.style.backgroundColor = "rgb(171, 245, 171)";
-                // }
 
             }
-
         }
+
+        var username = {};
+        let row_no = {};
 
         function todo() {
             if (task.value == "") {
@@ -206,11 +208,15 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
             }
 
             else {
-                let id = document.getElementById("id").value;
+                let data = {};
+
+                let row_id = document.getElementById("row_i_d").value;
+
                 var newT = document.getElementById("task").value;
 
                 var d = new Date();
                 var m = d.getDate() + "-" + d.getMonth() + "-" + d.getFullYear() + " " + d.getHours() + ":" + d.getMinutes();
+
 
                 var desc = document.getElementById("desc").value;
                 var tag = document.getElementById("tag").value;
@@ -219,11 +225,8 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
                 document.getElementById("task").value = '';
                 document.getElementById("desc").value = '';
                 document.getElementById("tag").value = '';
-                document.getElementById("id").value = '';
+                document.getElementById("row_i_d").value = '';
                 document.getElementById("Priority").value = "CHOOSE PRIORITY ";
-
-
-                let data = {};
 
                 data.date = m;
                 data.text = newT;
@@ -232,14 +235,15 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
                 data.complete = false;
                 data.col = "no_colour";
 
-                if (id && id != "") {
+                if (row_id && row_id != "") {
+                    console.log("bye");
 
-                    let row = document.getElementById(id);
+                    let row = table.getElementsByTagName('tr')[row_id];
 
                     row.cells[1].innerHTML = m;
                     row.cells[2].innerHTML = newT;
-                    row.cells[2].innerHTML = desc;
-                    row.cells[3].innerHTML = tag;
+                    row.cells[3].innerHTML = desc;
+                    row.cells[4].innerHTML = tag;
 
                     if (prio == "high") {
                         row.style.backgroundColor = "rgb(255, 199, 216)";
@@ -254,17 +258,19 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
                         data.col = "GREEN";
                     }
 
-                    localStorage.setItem(id, JSON.stringify(data));
+                    main_localStor(data, row_id);
 
                 }
                 else {
+
                     i = i + 1;
+
                     $("p").fadeIn(1000);
                     $("p").fadeOut(1000);
 
                     var row = table.insertRow(i);
-                    row.id = i;
 
+                    row.id = i;
                     row.insertCell(0).innerHTML = i;
                     row.insertCell(1).innerHTML = m;
                     row.insertCell(2).innerHTML = newT;
@@ -274,12 +280,10 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
 
                     if (prio == "high") {
                         row.style.backgroundColor = "rgb(255, 199, 216)";
-                        // row.style.opacity = "0.3";
                         data.col = "RED";
 
                     } else if (prio == "mid") {
                         row.style.backgroundColor = "rgb(238, 240, 141)";
-                        // row.style.opacity = "0.3";
                         data.col = "YELLOW";
 
                     } else if (prio == "low") {
@@ -287,7 +291,7 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
                         data.col = "GREEN";
                     }
 
-                    localStorage.setItem(i, JSON.stringify(data));
+                    main_localStor(data, i);
 
                 }
 
@@ -295,15 +299,45 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
                     event.preventDefault();
                 })
 
+
+
             }
         }
 
-        function edit(element) {
-            var id = element.parentNode.parentNode.id;
-            let data = JSON.parse(localStorage.getItem(id));
+        function main_localStor(row_data, num) {
+
+            row_no["row_no" + num] = row_data;
+            username["username"] = row_no;
+            localStorage.setItem("to_do_", JSON.stringify(username));
+        }
+
+        function get_data(row_num) {
+            let obj = JSON.parse(localStorage.getItem("to_do_"));
+            let rown = obj.username;
+            let data = {};
+            let count = 0;
+
+            for (let key in rown) {
+                count += 1;
+                if (rown.hasOwnProperty(key)) {
+                    data = rown[key];
+                    if (row_num == count) {
+                        break;
+                    }
+                }
+            }
+
+            return data;
+        }
+
+        function edit(rowdata) {
+            let num = rowdata.parentNode.parentNode.rowIndex;
+
+            let data = {};
+            data = get_data(num);
 
             $("#task").val(data.text);
-            $("#id").val(id);
+            $("#row_i_d").val(num);
             $("#desc").val(data.desc);
             $("#tag").val(data.tag);
 
@@ -311,25 +345,31 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
 
         function highlight_row(element) {
 
-            var key = element.parentNode.parentNode.rowIndex;
-            //var id = element.parentNode.parentNode.id;
+            var num = element.parentNode.parentNode.rowIndex;
 
-            var rowSelected = table.getElementsByTagName('tr')[key];
+            var rowSelected = table.getElementsByTagName('tr')[num];
 
             rowSelected.style.backgroundColor = "rgb(170, 181, 173)";
 
             rowSelected.deleteCell(5);
             rowSelected.insertCell(5).innerHTML = "<button onclick='removeTask(this)'>Delete</button> <button onclick='edit(this)'>Edit</button> <button onclick='rem_highlight_row(this)'>Undo</button>";
 
-            let data = JSON.parse(localStorage.getItem(key));
+            let data = {};
+            let obj_del = JSON.parse(localStorage.getItem("to_do_"));
+
+            let row_n = obj_del.username;
+
+            data = row_n["row_no" + num];
             data.complete = true;
-            localStorage.setItem(key, JSON.stringify(data));
+            row_n["row_no" + num] = data;
+
+            obj_del.username = row_n;
+            localStorage.setItem("to_do_", JSON.stringify(obj_del));
 
         }
 
         function rem_highlight_row(element) {
             var key = element.parentNode.parentNode.rowIndex;
-            //var id = element.parentNode.parentNode.id;
 
             var rowSelected = table.getElementsByTagName('tr')[key];
 
@@ -338,28 +378,31 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
             rowSelected.deleteCell(5);
             rowSelected.insertCell(5).innerHTML = "<button onclick='removeTask(this)'>Delete</button> <button onclick='edit(this)'>Edit</button> <button onclick='highlight_row(this)'>Complete</button>";
 
-            let data = JSON.parse(localStorage.getItem(key));
+            let data = {};
+            let obj_del = JSON.parse(localStorage.getItem("to_do_"));
+
+            let row_n = obj_del.username;
+
+            data = row_n["row_no" + key];
             data.complete = false;
+            row_n["row_no" + key] = data;
             var pri = data.col;
+
+            obj_del.username = row_n;
+            localStorage.setItem("to_do_", JSON.stringify(obj_del));
+     
 
             if (pri == "RED") {
                 rowSelected.style.backgroundColor = "rgb(255, 199, 216)";
-                // row.style.opacity = "0.3";
-                // data.col = "RED";
-
-            } else if (pri == "YELLOW") {
-                rowSelected.style.backgroundColor = "rgb(238, 240, 141)";
-                // row.style.opacity = "0.3";
-                //data.col = "YELLOW";
-
-            } else if (pri == "GREEN") {
-                rowSelected.style.backgroundColor = "rgb(171, 245, 171)";
-                // data.col = "GREEN";
             }
 
-            localStorage.setItem(key, JSON.stringify(data));
+            else if (pri == "YELLOW") {
+                rowSelected.style.backgroundColor = "rgb(238, 240, 141)";
+            }
 
-
+            else if (pri == "GREEN") {
+                rowSelected.style.backgroundColor = "rgb(171, 245, 171)";
+            }
 
         }
 
@@ -367,13 +410,17 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
 
             var key = element.parentNode.parentNode.rowIndex;
 
-            var row = table.getElementsByTagName('tr')[key];
-
             table.deleteRow(key);
-            localStorage.removeItem(key);
+
+            let obj_del = JSON.parse(localStorage.getItem("to_do_"));
+
+            let row_n = obj_del.username;
+
+            row_n["row_no" + key] = undefined;
+            obj_del.username = row_n;
+            localStorage.setItem("to_do_", JSON.stringify(obj_del));
 
             i--;
-            s_no--;
 
         }
 
@@ -382,6 +429,7 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
             var r = confirm("Are you sure you want to clear the list?");
 
             if (r == true) {
+
                 var Rows = table.getElementsByTagName('tr');
                 var len = Rows.length;
 
@@ -389,8 +437,14 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
                     table.deleteRow(-1);
                     i = i - 1;
                 }
-                localStorage.clear();
-                console.log(len);
+
+                let obj_del = JSON.parse(localStorage.getItem("to_do_"));
+
+                obj_del["username"] = undefined;
+
+                localStorage.setItem("to_do_", JSON.stringify(obj_del));
+
+
             }
             else {
                 return;
