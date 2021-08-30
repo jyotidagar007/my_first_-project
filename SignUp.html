@@ -1,0 +1,116 @@
+<html>
+
+<head>
+
+    <style>
+        .hl {
+            border-bottom: 3px solid grey;
+            width: 500px;
+        }
+
+        .fixed {
+            position: fixed;
+            top: 10%;
+            left: 35%;
+        }
+
+        .sign_up {
+            cursor: pointer;
+            position: fixed;
+            left: 45%;
+            padding: 0.8%;
+            padding-left: 4%;
+            padding-right: 4%;
+            border-radius: 2cm;
+            font-size: large;
+            background-color: silver;
+        }
+
+        .sign_up:hover {
+            background-color: rgb(209, 225, 240);
+        }
+
+        /* .success
+        {
+
+        } */
+    </style>
+</head>
+
+<body style="background-image: url(white.jpg);">
+    <div class="fixed">
+        <b>
+            <div style="font-size:xx-large; color: rgb(138, 121, 121);">SIGN UP
+        </b>
+    </div>
+    <div style="color: grey;">It's quick and easy</div><br>
+    <div class="hl"></div><br><br>
+
+    <form autocomplete="off">
+        <input type="text" id="fname" name="fname" value="" placeholder="First name" style="padding: 2%;"
+            required />&nbsp;&nbsp;&nbsp;
+        <input type="text" id="lname" name="lname" value="" placeholder="Last name" style="padding: 2%;" value="" /><br>
+        <p style="color: grey;">Date of birth: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="date" id="dob" name="dob" value="" style="color: grey; padding: 1.4%;" required />
+        </p>
+        <p id="print"></p>
+        <input type="email" id="email" name="email" value="" placeholder="Email address"
+            style="padding: 2%; padding-right: 46%;" required /><br><br>
+        <input type="password" id="pass" name="pass" value="" placeholder="Enter new password"
+            style="padding: 2%; padding-right: 46%;" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}"
+            title="Must contain at least one number and one uppercase and lowercase letter, and at least 5 or more characters"
+            required /><br><br>
+        <input type="password" id="con_pass" name="con_pass" value="" placeholder="Confirm password"
+            style="padding: 2%; padding-right: 46%;" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}" required /><br><br>
+        <button class="sign_up" onclick="sign_up()"><b>Sign Up</b></button>
+
+    </form>
+    </div>
+
+    <script>
+
+            function sign_up() 
+            { 
+
+            let fname = document.getElementById("fname").value;
+            let lname = document.getElementById("lname").value;
+            let dob = document.getElementById("dob").value;
+            let mail = document.getElementById("email").value;
+            let pw = document.getElementById("pass").value;
+            let c_pw = document.getElementById("con_pass").value;
+
+            let d = new Date().getFullYear();
+            let key=0;
+
+            let signup = JSON.parse(localStorage.getItem("signup"));
+
+            if (pw === c_pw)
+            {  
+                key = new Date().getTime();
+                
+                let info = {};
+                
+                info["fname"] = fname;
+                info["lname"] = lname ;
+                info["dob"] = dob;
+                info["mail"] = mail;
+                info["pw"] = pw;
+
+                signup[key] = info;
+                  
+                alert("You have signed up successfully");
+                window.location.href = "login.html";
+                localStorage.setItem("signup" , JSON.stringify(signup));
+
+            }
+                
+                else
+             {  
+                 alert("Password doesn't match.");
+                return;
+             }
+        }
+    </script>
+</body>
+
+</html>
