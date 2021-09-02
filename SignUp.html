@@ -47,20 +47,20 @@
     <div class="hl"></div><br><br>
 
     <form autocomplete="off">
-        <input type="text" id="fname" name="fname" value="" placeholder="First name" style="padding: 2%;"
+        <input type="text" id="fname" name="fname" placeholder="First name" style="padding: 2%;"
             required />&nbsp;&nbsp;&nbsp;
-        <input type="text" id="lname" name="lname" value="" placeholder="Last name" style="padding: 2%;" value="" /><br>
+        <input type="text" id="lname" name="lname" placeholder="Last name" style="padding: 2%;" value="" /><br>
         <p style="color: grey;">Date of birth: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="date" id="dob" name="dob" value="" style="color: grey; padding: 1.4%;" required />
+            <input type="date" id="dob" name="dob" style="color: grey; padding: 1.4%;" required />
         </p>
         <p id="print"></p>
-        <input type="email" id="email" name="email" value="" placeholder="Email address"
+        <input type="email" id="email" name="email"  placeholder="Email address"
             style="padding: 2%; padding-right: 46%;" required /><br><br>
-        <input type="password" id="pass" name="pass" value="" placeholder="Enter new password"
+        <input type="password" id="pass" name="pass" placeholder="Enter new password"
             style="padding: 2%; padding-right: 46%;" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}"
             title="Must contain at least one number and one uppercase and lowercase letter, and at least 5 or more characters"
             required /><br><br>
-        <input type="password" id="con_pass" name="con_pass" value="" placeholder="Confirm password"
+        <input type="password" id="con_pass" name="con_pass"  placeholder="Confirm password"
             style="padding: 2%; padding-right: 46%;" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}" required /><br><br>
         <button class="sign_up" onclick="sign_up()"><b>Sign Up</b></button>
 
@@ -71,7 +71,7 @@
 
             function sign_up() 
             { 
-
+            
             let fname = document.getElementById("fname").value;
             let lname = document.getElementById("lname").value;
             let dob = document.getElementById("dob").value;
@@ -81,14 +81,17 @@
 
             let d = new Date().getFullYear();
             let key=0;
+            
 
-            let signup = JSON.parse(localStorage.getItem("signup"));
-
-            if (pw === c_pw)
-            {  
+            if (pw == c_pw && pw != "") 
+            { 
+                
                 key = new Date().getTime();
                 
                 let info = {};
+                let signup = {};
+
+                signup = JSON.parse(localStorage.getItem("signup"));
                 
                 info["fname"] = fname;
                 info["lname"] = lname ;
@@ -97,10 +100,15 @@
                 info["pw"] = pw;
 
                 signup[key] = info;
+
                   
                 alert("You have signed up successfully");
-                window.location.href = "login.html";
                 localStorage.setItem("signup" , JSON.stringify(signup));
+                window.location.replace("login.html"); 
+
+                document.addEventListener('submit', (event) => {
+                    event.preventDefault();
+                })
 
             }
                 

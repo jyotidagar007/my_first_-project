@@ -42,6 +42,30 @@
 
         }
 
+        .logout {
+            border: hidden;
+            background-color: transparent;
+            padding: 0.5%;
+            padding-right: 1%;
+            padding-left: 1%;
+            position: fixed;
+            top: 3%;
+            right: 1%;
+            font-size: large;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            cursor: pointer;
+        }
+
+        .hello {
+            position: fixed;
+            top: 2%;
+            left: 1%;
+            color: teal;
+            font-size: large;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            text-align: center;
+        }
+
         #left {
             position: fixed;
             left: 5%;
@@ -64,7 +88,8 @@
 </head>
 
 <body style="background-image: url(background.jpg);">
-
+    
+    <p id="hi" class="hello"></p>
     <div id="left" class="todo">
 
         <form autocomplete="off">
@@ -93,6 +118,7 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
     </div>
 
     <div id="right" class="todo">
+        <button class="logout" onclick="logout()"><b>LOGOUT</b></button>
 
         <div class="Outer">
             <h1 style=" font-family: Georgia, 'Times New Roman', Times, serif; text-align:center; color: navy;">TO-DO
@@ -113,8 +139,10 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
                         DESCRIPTION</th>
                     <th style="background-color: hsl(202, 38%, 40%, 0.425); font-family: sans-serif; width:2.5cm;">TAG
                     </th>
-                    <th style="background-color: hsl(202, 38%, 40%, 0.425); font-family: sans-serif; width:2.5cm;"
-                        colspan="3">ACTION</th>
+                    <th style="background-color: hsl(202, 38%, 40%, 0.425); font-family: sans-serif; width:2.5cm;">
+                        ACTION</th>
+                    <th style="background-color: hsl(202, 38%, 40%, 0.425); font-family: sans-serif; width:2.5cm;">SWAP
+                    </th>
             </tr>
         </table><br>
 
@@ -127,7 +155,13 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
 
     <script>
 
-        // var username = sessionStorage.getItem("username");
+        var logged_in = {};
+        logged_in = JSON.parse(localStorage.getItem("login"));
+        let mail = logged_in.current_user;
+        let fname = logged_in.userName;
+
+        var username = {};
+        let row_no = {};
 
         $(document).ready(function () {
             $(".Outer").fadeIn(2000);
@@ -136,6 +170,8 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
             $(".todo").fadeIn(3000);
         });
 
+        document.getElementById("hi").innerHTML = "<b>WELCOME,&nbsp;&nbsp;</b>"+"<b>"+fname+"</b>";
+
         var i = 0;
 
         var table = document.getElementById("myTable");
@@ -143,11 +179,13 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
         let obj_td = JSON.parse(localStorage.getItem("to_do_"));
 
         if (obj_td) {
-            let r_n = obj_td.username;
+            let r_n = obj_td[mail];
+            console.log(r_n);
 
             for (let key in r_n) {
                 i += 1;
             }
+
             let s_no = 0;
             for (let key in r_n) {
                 if (r_n.hasOwnProperty(key)) {
@@ -193,13 +231,12 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
                     }
 
                     row.insertCell(5).innerHTML = ch3;
+                    row.insertCell(6).innerHTML = "<button onclick='moveUp(this)'>↑</button> <button onclick='moveDown(this)'>↓</button>";
+
                 }
 
             }
         }
-
-        var username = {};
-        let row_no = {};
 
         function todo() {
             if (task.value == "") {
@@ -236,7 +273,6 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
                 data.col = "no_colour";
 
                 if (row_id && row_id != "") {
-                    console.log("bye");
 
                     let row = table.getElementsByTagName('tr')[row_id];
 
@@ -277,6 +313,7 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
                     row.insertCell(3).innerHTML = desc;
                     row.insertCell(4).innerHTML = tag;
                     row.insertCell(5).innerHTML = "<button onclick='removeTask(this)'>Delete</button> <button onclick='edit(this)'>Edit</button> <button onclick='highlight_row(this)'>Complete</button>";
+                    row.insertCell(6).innerHTML = "<button onclick='moveUp(this)'>↑</button> <button onclick='moveDown(this)'>↓</button>";
 
                     if (prio == "high") {
                         row.style.backgroundColor = "rgb(255, 199, 216)";
@@ -294,26 +331,31 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
                     main_localStor(data, i);
 
                 }
-
-                document.addEventListener('submit', (event) => {
-                    event.preventDefault();
-                })
-
-
-
             }
         }
 
         function main_localStor(row_data, num) {
-
+            console.log(row_data);
+            console.log(num);
+            username = JSON.parse(localStorage.getItem("to_do_"));
+            if (username)
+            {
+                row_no = username[mail];
+            }
+            else
+            {
+                username = {};
+                row_no = {};
+                     
+            }
             row_no["row_no" + num] = row_data;
-            username["username"] = row_no;
+            username[mail] = row_no;
             localStorage.setItem("to_do_", JSON.stringify(username));
         }
 
         function get_data(row_num) {
             let obj = JSON.parse(localStorage.getItem("to_do_"));
-            let rown = obj.username;
+            let rown = obj[mail];
             let data = {};
             let count = 0;
 
@@ -329,6 +371,110 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
 
             return data;
         }
+
+        function moveUp(rowdata) {
+            let num = rowdata.parentNode.parentNode.rowIndex;
+            let row = table.getElementsByTagName('tr')[num];
+            let new_row = table.getElementsByTagName('tr')[num-1];
+
+            let obj = JSON.parse(localStorage.getItem("to_do_"));
+            let rown = obj[mail];
+            console.log(rown);
+            
+            if (num == 1) {
+                alert("Sorry, row cannot move further.")
+            }
+             else {
+                      
+                let temp = {};
+                let data = {};
+                temp = rown["row_no" + num] ;
+                data = rown["row_no" + (num-1)];
+
+                row.cells[1].innerHTML = data.date;
+                row.cells[2].innerHTML = data.text;
+                row.cells[3].innerHTML = data.desc;
+                row.cells[4].innerHTML = data.tag;
+
+                new_row.cells[1].innerHTML = temp.date;
+                new_row.cells[2].innerHTML = temp.text;
+                new_row.cells[3].innerHTML = temp.desc;
+                new_row.cells[4].innerHTML = temp.tag;
+               
+                rown["row_no" + num] = rown["row_no" + (num-1)];
+                rown["row_no" + (num-1)] = temp;
+                console.log(rown);
+
+                obj[mail] = rown;
+                localStorage.setItem("to_do_", JSON.stringify(obj));
+             }
+
+        }
+
+        function moveDown(rowdata) {
+            let num = rowdata.parentNode.parentNode.rowIndex;
+            let row = table.getElementsByTagName('tr')[num];
+            let new_row = table.getElementsByTagName('tr')[num+1];
+
+            let obj = JSON.parse(localStorage.getItem("to_do_"));
+            let rown = obj[mail];
+
+            let count = 0;
+
+            for (let key in rown) {
+                count += 1;
+            }
+
+            if (num == count) {
+                alert("Sorry, row cannot move further.")
+            }
+            else {
+
+                let temp = {};
+                let data = {};
+                temp = rown["row_no" + num] ;
+                data = rown["row_no" + (num+1)];
+
+                row.cells[1].innerHTML = data.date;
+                row.cells[2].innerHTML = data.text;
+                row.cells[3].innerHTML = data.desc;
+                row.cells[4].innerHTML = data.tag;
+
+                new_row.cells[1].innerHTML = temp.date;
+                new_row.cells[2].innerHTML = temp.text;
+                new_row.cells[3].innerHTML = temp.desc;
+                new_row.cells[4].innerHTML = temp.tag;
+               
+                rown["row_no" + num] = rown["row_no" + (num+1)];
+                rown["row_no" + (num+1)] = temp;
+                console.log(rown);
+
+                obj[mail] = rown;
+                localStorage.setItem("to_do_", JSON.stringify(obj));
+             
+            }
+        }
+
+        // function cellInsertion(task_data) {
+        //     var ch1 = "<button onclick='removeTask(this)'>Delete</button> ";
+        //     var ch2 = "<button onclick='edit(this)'>Edit</button> ";
+        //     var ch = ch1.concat(ch2);
+        //     var ch3;
+
+        //     if (task_data.complete) {
+
+        //         let ch4 = "<button onclick='rem_highlight_row(this)'>Undo</button>";
+        //         ch3 = ch.concat(ch4);
+
+        //     }
+        //     else {
+
+        //         let ch4 = "<button onclick='highlight_row(this)'>Complete</button>";
+        //         ch3 = ch.concat(ch4);
+        //     }
+
+        //     return ch3;
+        // }
 
         function edit(rowdata) {
             let num = rowdata.parentNode.parentNode.rowIndex;
@@ -357,13 +503,13 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
             let data = {};
             let obj_del = JSON.parse(localStorage.getItem("to_do_"));
 
-            let row_n = obj_del.username;
+            let row_n = obj_del[mail];
 
             data = row_n["row_no" + num];
             data.complete = true;
             row_n["row_no" + num] = data;
 
-            obj_del.username = row_n;
+            obj_del[mail] = row_n;
             localStorage.setItem("to_do_", JSON.stringify(obj_del));
 
         }
@@ -381,16 +527,16 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
             let data = {};
             let obj_del = JSON.parse(localStorage.getItem("to_do_"));
 
-            let row_n = obj_del.username;
+            let row_n = obj_del[mail];
 
             data = row_n["row_no" + key];
             data.complete = false;
             row_n["row_no" + key] = data;
             var pri = data.col;
 
-            obj_del.username = row_n;
+            obj_del[mail] = row_n;
             localStorage.setItem("to_do_", JSON.stringify(obj_del));
-     
+
 
             if (pri == "RED") {
                 rowSelected.style.backgroundColor = "rgb(255, 199, 216)";
@@ -414,14 +560,20 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
 
             let obj_del = JSON.parse(localStorage.getItem("to_do_"));
 
-            let row_n = obj_del.username;
+            let row_n = obj_del[mail];
 
             row_n["row_no" + key] = undefined;
-            obj_del.username = row_n;
+            obj_del[mail] = row_n;
             localStorage.setItem("to_do_", JSON.stringify(obj_del));
 
             i--;
 
+        }
+
+        function logout() {
+            logged_in = undefined;
+            localStorage.setItem("login", JSON.stringify(logged_in));
+            window.location.replace("login.html");
         }
 
         function clearAll() {
@@ -440,7 +592,7 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
 
                 let obj_del = JSON.parse(localStorage.getItem("to_do_"));
 
-                obj_del["username"] = undefined;
+                obj_del[mail] = undefined;
 
                 localStorage.setItem("to_do_", JSON.stringify(obj_del));
 
@@ -450,6 +602,11 @@ padding: 4%; padding-top: 3%; padding-bottom: 3%; border-radius: 2cm; color: rgb
                 return;
             }
         }
+
+
+        document.addEventListener('submit', (event) => {
+            event.preventDefault();
+        })
 
     </script>
 

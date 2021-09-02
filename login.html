@@ -35,27 +35,29 @@
             let pw = document.getElementById("pass").value;
             let flag = true;
 
-            let login = JSON.parse(localStorage.getItem("signup"));
+            let logged_in = JSON.parse(localStorage.getItem("signup"));
             
 
-           for (let key in login) 
+           for (let key in logged_in) 
            {
-                if (login.hasOwnProperty(key))
+                if (logged_in.hasOwnProperty(key))
                 {
-                    value = login[key];
+                    value = logged_in[key];
 
                     if((value.mail == mail) && (value.pw == pw))
                     {
                         alert("You have logged in successfully");
                         flag = false;
-                        sessionStorage.setItem("username", mail);
+                        login["current_user"] = mail;
+                        login["userName"] = value.fname;
+                        localStorage.setItem("login" , JSON.stringify(login));
                         window.location.href = "jyoti.html";
                         break;
                     }
                 }
             }
 
-            if(count)
+            if(flag)
             {
                 alert("Your email or password is incorrect. Please try again.");
             }
